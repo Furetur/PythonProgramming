@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Callable, TypeVar, Optional, Tuple, Union
+from typing import Callable, TypeVar, Tuple
 from functools import wraps
 
 T = TypeVar("T")
@@ -27,21 +27,14 @@ def for_each_argument(initial_value: R = None) -> Callable[[ReceivedFunction], R
 
     # this trick is used to remain the return types clear
     def decorator(f: ReceivedFunction) -> ResultFunction:
-        """
-
-        :param f: The original function which receives 4 parameters: one of many target arguments of type T,
-        current target argument index in the list of all target arguments provided to the result function,
-        total number of target arguments provided to the result function,
-        accumulator of type R which is equal to the return value of the f function on the previous iteration
-        :return:
-        """
         accumulator = initial_value
 
         @wraps(f)
         def f_for_many(*many_args):
             nonlocal accumulator
+            n_args = len(many_args)
             for arg_index, arg in enumerate(many_args):
-                accumulator = f(arg, arg_index, len(many_args), accumulator)
+                accumulator = f(arg, arg_index, n_args, accumulator)
             return accumulator
 
         return f_for_many
@@ -57,9 +50,14 @@ def print_line(line: str) -> None:
     print(line if len(line) == 0 or line[-1] == "\n" else f"{line}\n", end="")
 
 
+def print_file_header_conditionally(filepath: str, n_files: int) -> None:
+    if n_files > 1:
+        print(f"==> {filepath} <==")
+
+
 @for_each_argument(initial_value=(0, 0, 0))
 def wc(
-    filepath: str, cur_filepath_index: int, n_filepaths: int, total_counters: Tuple[int, int, int]
+        filepath: str, cur_filepath_index: int, n_filepaths: int, total_counters: Tuple[int, int, int]
 ) -> Tuple[int, int, int]:
     total_lines, total_words, total_bytes = total_counters
     cur_lines, cur_words, cur_bytes = 0, 0, 0
@@ -106,8 +104,7 @@ def nl(filepath: str, _, __, line_count: int) -> int:
 
 @for_each_argument()
 def head(filepath: str, _, n_files: int, __) -> None:
-    if n_files > 1:
-        print(f"==> {filepath} <==")
+    print_file_header_conditionally(filepath, n_files)
     try:
         with open(filepath) as f:
             for line_num, line in enumerate(f):
@@ -121,8 +118,7 @@ def head(filepath: str, _, n_files: int, __) -> None:
 
 @for_each_argument()
 def tail(filepath: str, _, n_files: int, __) -> None:
-    if n_files > 1:
-        print(f"==> {filepath} <==")
+    print_file_header_conditionally(filepath, n_files)
     queue: deque = deque(maxlen=10)
     try:
         with open(filepath) as f:
