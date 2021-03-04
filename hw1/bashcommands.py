@@ -57,7 +57,7 @@ def print_file_header_conditionally(filepath: str, n_files: int) -> None:
 
 @for_each_argument(initial_value=(0, 0, 0))
 def wc(
-        filepath: str, cur_filepath_index: int, n_filepaths: int, total_counters: Tuple[int, int, int]
+    filepath: str, cur_filepath_index: int, n_filepaths: int, total_counters: Tuple[int, int, int]
 ) -> Tuple[int, int, int]:
     total_lines, total_words, total_bytes = total_counters
     cur_lines, cur_words, cur_bytes = 0, 0, 0
