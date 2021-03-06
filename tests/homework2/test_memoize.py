@@ -77,5 +77,26 @@ class TestMemoizeWithKeywordArgs(unittest.TestCase):
         self.assertEqual(1, self.invocations)
 
 
+class TestMemoizeNoCache(unittest.TestCase):
+    def setUp(self) -> None:
+        self.invocations = 0
+
+        def f(x):
+            self.invocations += 1
+            return x
+
+        self.f = MemoizedFunction(f, 0)
+
+    def test_if_all_arguments_are_unique_should_invoke_every_time(self):
+        for i in range(100):
+            self.f(i)
+        self.assertEqual(100, self.invocations)
+
+    def test_should_invoke_every_time_if_all_arguments_are_the_same(self):
+        for i in range(100):
+            self.f(1)
+        self.assertEqual(100, self.invocations)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -15,7 +15,7 @@ class Cache(Generic[K, V]):
 
     def __setitem__(self, key: K, value: V):
         self.data[key] = value
-        if len(self.data) == self.size:
+        if len(self.data) >= self.size:
             self.data.popitem(last=False)
 
     def __getitem__(self, key: K) -> V:

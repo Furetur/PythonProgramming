@@ -20,6 +20,11 @@ class TestCache(unittest.TestCase):
                 actual_values.add(i)
         self.assertTrue(expected_values, actual_values)
 
+    def test_cache_of_size_0_should_not_put_values(self):
+        cache = Cache(0)
+        cache[1] = 1
+        self.assertFalse(1 in cache)
+
 
 if __name__ == "__main__":
     unittest.main()
