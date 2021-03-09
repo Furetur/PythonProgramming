@@ -26,18 +26,31 @@ def has_varargs(func: Callable[..., Any]) -> bool:
 R = TypeVar("R")
 
 
-def curry_internal(func: Callable[..., R], arity: int, passed_args: list = None) -> Callable:
+def __check_curry_arity(func: Callable[..., R], arity: int):
+    if arity < 0:
+        raise TypeError(f"Arity cannot be negative but received {arity}")
+    try:
+        actual_arity = positional_arity(func)
+        has_positional_varargs = has_varargs(func)
+    except TypeError:
+        # This happens if [func] is a built in function or other function which signature is unknown.
+        # If we cannot access [func]'s signature we cannot checks the correctness of arity => we silently fail
+        return
+
+    if (not has_positional_varargs and arity != actual_arity) or arity < actual_arity:
+        raise TypeError(
+            f"Received function {func} with {actual_arity} positional arguments but arity was less: {arity}"
+        )
+
+
+def __curry_internal(func: Callable[..., R], arity: int, passed_args: list = None) -> Callable:
     """
     For internal use by curry_explicit only!
     """
     if passed_args is None:
         passed_args = []
 
-    actual_arity = positional_arity(func)
-    if (not has_varargs(func) and arity != actual_arity) or arity < actual_arity:
-        raise TypeError(
-            f"Received function {func} with {actual_arity} positional arguments but arity was less: {arity}"
-        )
+    __check_curry_arity(func, arity)
 
     if arity == 0:
         return update_wrapper(lambda: func(), func)
@@ -45,7 +58,7 @@ def curry_internal(func: Callable[..., R], arity: int, passed_args: list = None)
     @wraps(func)
     def curried_function(x):
         if len(passed_args) + 1 < arity:
-            return curry_internal(func, arity, [*passed_args, x])
+            return __curry_internal(func, arity, [*passed_args, x])
         else:
             return func(*passed_args, x)
 
@@ -62,4 +75,4 @@ def curry_explicit(func: Callable[..., R], arity: int) -> Callable:
     positional arguments.
     :return: A curried function.
     """
-    return curry_internal(func, arity)
+    return __curry_internal(func, arity)

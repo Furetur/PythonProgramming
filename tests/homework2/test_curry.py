@@ -87,6 +87,9 @@ class TestCurry(unittest.TestCase):
         with self.assertRaises(TypeError):
             curry_explicit(add, 0)
 
+    def test_does_not_fail_for_builtin_functions(self):
+        curry_explicit(print, 5)
+
 
 if __name__ == "__main__":
     unittest.main()
