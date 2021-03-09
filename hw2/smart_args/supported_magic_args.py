@@ -1,13 +1,12 @@
 from copy import deepcopy
-from typing import TypeVar, Callable, Union, cast, Protocol, runtime_checkable
+from typing import TypeVar, Callable, Union, cast, Generic
 
 from hw2.smart_args.no_value import NoValueType, NoValue
 
 R = TypeVar("R", covariant=True)
 
 
-@runtime_checkable
-class MagicArgument(Protocol[R]):
+class MagicArgument(Generic[R]):
     def __call__(self, actual_arg_value: Union[R, NoValueType]) -> R:
         ...
 

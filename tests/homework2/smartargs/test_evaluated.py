@@ -1,6 +1,6 @@
 import unittest
 
-from hw2.smart_args.smart_args_decorator import MagicArgumentsMisuseError, smart_args
+from hw2.smart_args.smart_args_decorator import smart_args
 from hw2.smart_args.supported_magic_args import Evaluated, Isolated
 
 
@@ -14,7 +14,7 @@ class EvaluatedTest(unittest.TestCase):
             Evaluated(Isolated)
 
     def test_evaluated_raises_if_passed_as_a_positional_argument(self):
-        with self.assertRaises(MagicArgumentsMisuseError):
+        with self.assertRaises(TypeError):
 
             @smart_args
             def f(x=Evaluated(lambda: 1)):

@@ -6,14 +6,6 @@ from hw2.smart_args.no_value import NoValue
 from hw2.smart_args.supported_magic_args import MagicArgument
 
 
-class MagicArgumentsMisuseError(TypeError):
-    """
-    The error that is raised when magic arguments are used where they should not be used.
-    """
-
-    pass
-
-
 def find_magic_kwargs(arg_spec: FullArgSpec) -> List[Tuple[str, MagicArgument]]:
     """
     Finds magic keyword arguments and their magic argument default values in the FullArgSpec
@@ -45,9 +37,7 @@ class SmartArgs(Generic[R]):
         if self.positional_defaults is not None and any(
             isinstance(default_value, MagicArgument) for default_value in self.positional_defaults
         ):
-            raise MagicArgumentsMisuseError(
-                "Magic arguments can only be used as default values for keyword-only arguments"
-            )
+            raise TypeError("Magic arguments can only be used as default values for keyword-only arguments")
 
     def __call__(self, *args, **kwargs) -> R:
         for kwarg_name, magic_default_value in self.magic_kwargs:

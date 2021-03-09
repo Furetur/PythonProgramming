@@ -75,6 +75,16 @@ class SmartArgsWithNoMagicTests(unittest.TestCase):
 
         self.assertEqual(26, f(1, 2, z=3, k=10))
 
+    def test_does_not_evaluate_regular_functions_as_magic_args(self):
+        def regular_function(x):
+            return x
+
+        @smart_args
+        def f(*, x=regular_function):
+            return x
+
+        self.assertEqual(regular_function, f())
+
 
 if __name__ == "__main__":
     unittest.main()
