@@ -49,17 +49,9 @@ class TestCurry(unittest.TestCase):
         self.curried_add(1)
         self.assertTrue(callable(self.curried_add(2)))
 
-    def test_providing_arity_greater_than_actual_for_add_should_raise(self):
+    def test_providing_negative_arity_should_raise(self):
         with self.assertRaises(TypeError):
-            curry_explicit(add, 3)
-
-    def test_providing_arity_less_than_actual_for_add_should_raise(self):
-        with self.assertRaises(TypeError):
-            curry_explicit(add, 1)
-
-    def test_providing_arity_less_than_number_of_positional_arguments_should_raise(self):
-        with self.assertRaises(TypeError):
-            curry_explicit(add_many, 0)
+            curry_explicit(add, -1)
 
     def test_add_many_should_work_with_3_arity(self):
         cur_add_many = curry_explicit(add_many, 3)
@@ -82,10 +74,6 @@ class TestCurry(unittest.TestCase):
     def test_should_ignore_kwargs(self):
         mul = curry_explicit(mul_with_kwargs, 2)
         self.assertEqual(mul(2)(3), 6)
-
-    def test_should_raise_if_positional_arity_is_greater_than_0_but_arity_was_0(self):
-        with self.assertRaises(TypeError):
-            curry_explicit(add, 0)
 
 
 if __name__ == "__main__":
