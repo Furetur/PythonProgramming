@@ -1,7 +1,18 @@
 from collections import OrderedDict
 from dataclasses import dataclass
 from functools import update_wrapper
-from typing import Hashable, Generic, TypeVar, Protocol, Callable, OrderedDict as OrderedDictType, Tuple, Dict
+from typing import (
+    Hashable,
+    Generic,
+    TypeVar,
+    Protocol,
+    Callable,
+    OrderedDict as OrderedDictType,
+    Tuple,
+    Dict,
+    Set,
+    FrozenSet,
+)
 
 K = TypeVar("K", bound=Hashable)
 
@@ -38,11 +49,11 @@ class Cache(Generic[K, V]):
         return key in self.data
 
 
-def freeze_dict(dictionary: Dict[K, V]) -> Tuple[Tuple[K, V], ...]:
+def freeze_dict(dictionary: Dict[K, V]) -> FrozenSet[Tuple[K, V]]:
     """
     Converts a dict into tuple of KV-pairs
     """
-    return tuple((k, v) for k, v in dictionary.items())
+    return frozenset((k, v) for k, v in dictionary.items())
 
 
 @dataclass(frozen=True)
@@ -52,7 +63,7 @@ class FrozenFunctionArguments:
     """
 
     args: Tuple[Hashable, ...]
-    kwargs: Tuple[Hashable, ...]
+    kwargs: FrozenSet[Tuple[str, Hashable]]
 
     @staticmethod
     def from_args(*args: Hashable, **kwargs: Hashable) -> "FrozenFunctionArguments":

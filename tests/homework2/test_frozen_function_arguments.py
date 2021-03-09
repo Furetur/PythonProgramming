@@ -42,6 +42,11 @@ class TestFrozenArguments(unittest.TestCase):
         frozen_args2 = FrozenFunctionArguments.from_args(*make_big_list(10), **make_big_dict(10))
         self.assertNotEqual(frozen_args1, frozen_args2)
 
+    def test_same_keyword_arguments_but_in_different_order_should_produce_equal_frozen_args(self):
+        frozen_args1 = FrozenFunctionArguments.from_args(x=1, y=2)
+        frozen_args2 = FrozenFunctionArguments.from_args(y=2, x=1)
+        self.assertEqual(frozen_args1, frozen_args2)
+
 
 if __name__ == "__main__":
     unittest.main()
