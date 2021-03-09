@@ -9,6 +9,7 @@ class MagicArgumentsMisuseError(TypeError):
     """
     The error that is raised when magic arguments are used where they should not be used.
     """
+
     pass
 
 
@@ -26,7 +27,7 @@ class SmartArgs(Generic[R]):
 
     def check_magic_args_misuse(self) -> None:
         if self.positional_defaults is not None and any(
-                isinstance(default_value, MagicArgument) for default_value in self.positional_defaults
+            isinstance(default_value, MagicArgument) for default_value in self.positional_defaults
         ):
             raise MagicArgumentsMisuseError(
                 "Magic arguments can only be used as default values for keyword-only arguments"

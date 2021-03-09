@@ -8,7 +8,8 @@ R = TypeVar("R", covariant=True)
 
 @runtime_checkable
 class MagicArgument(Protocol[R]):
-    def __call__(self, actual_arg_value: Union[R, NoValueType]) -> R: ...
+    def __call__(self, actual_arg_value: Union[R, NoValueType]) -> R:
+        ...
 
 
 class Evaluated(MagicArgument[R]):
