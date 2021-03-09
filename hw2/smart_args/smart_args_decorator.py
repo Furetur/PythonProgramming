@@ -1,5 +1,6 @@
-from inspect import getfullargspec
-from typing import TypeVar, Generic, Callable
+from functools import update_wrapper
+from inspect import getfullargspec, FullArgSpec
+from typing import TypeVar, Generic, Callable, List, Tuple
 
 from hw2.smart_args.no_value import NoValue
 from hw2.smart_args.supported_magic_args import MagicArgument
@@ -13,6 +14,21 @@ class MagicArgumentsMisuseError(TypeError):
     pass
 
 
+def find_magic_kwargs(arg_spec: FullArgSpec) -> List[Tuple[str, MagicArgument]]:
+    """
+    Finds magic keyword arguments and their magic argument default values in the FullArgSpec
+    :param arg_spec: argument specification of the researched function
+    :return: list of tuples (keyword argument name, its magic argument default value)
+    """
+    kwonly_args = arg_spec.kwonlyargs
+    kwarg_defaults = arg_spec.kwonlydefaults or {}
+    return [
+        (kwarg_name, kwarg_defaults[kwarg_name])
+        for kwarg_name in kwonly_args
+        if kwarg_name in kwarg_defaults and isinstance(kwarg_defaults[kwarg_name], MagicArgument)
+    ]
+
+
 R = TypeVar("R")
 
 
@@ -21,9 +37,9 @@ class SmartArgs(Generic[R]):
         args_data = getfullargspec(func)
         self.func = func
         self.positional_defaults = args_data.defaults
-        self.kwargs_defaults = args_data.kwonlydefaults or {}
-        self.magic_kwarg_names = [name for name in args_data.kwonlyargs if self.has_magic_default_value(name)]
+        self.magic_kwargs = find_magic_kwargs(args_data)
         self.check_magic_args_misuse()
+        update_wrapper(self, func)
 
     def check_magic_args_misuse(self) -> None:
         if self.positional_defaults is not None and any(
@@ -33,13 +49,9 @@ class SmartArgs(Generic[R]):
                 "Magic arguments can only be used as default values for keyword-only arguments"
             )
 
-    def has_magic_default_value(self, kwarg_name: str) -> bool:
-        return kwarg_name in self.kwargs_defaults and isinstance(self.kwargs_defaults[kwarg_name], MagicArgument)
-
     def __call__(self, *args, **kwargs) -> R:
-        for kwarg_name in self.magic_kwarg_names:
-            magic_default_argument = self.kwargs_defaults[kwarg_name]
-            kwargs[kwarg_name] = magic_default_argument(kwargs[kwarg_name] if kwarg_name in kwargs else NoValue)
+        for kwarg_name, magic_default_value in self.magic_kwargs:
+            kwargs[kwarg_name] = magic_default_value(kwargs[kwarg_name] if kwarg_name in kwargs else NoValue)
         return self.func(*args, **kwargs)
 
 

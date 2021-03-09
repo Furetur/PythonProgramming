@@ -3,7 +3,22 @@ import unittest
 from hw2.smart_args.smart_args_decorator import smart_args
 
 
+def func_with_doc():
+    """
+    Doc
+    """
+    pass
+
+
 class SmartArgsWithNoMagicTests(unittest.TestCase):
+    def test_should_remain_doc_string(self):
+        f = smart_args(func_with_doc)
+        self.assertEqual(func_with_doc.__doc__, f.__doc__)
+
+    def test_should_remain_function_name(self):
+        f = smart_args(func_with_doc)
+        self.assertEqual(func_with_doc.__name__, f.__name__)
+
     def test_should_work_for_functions_of_0_arity(self):
         @smart_args
         def f():
