@@ -35,4 +35,7 @@ def spy(function: Callable[..., R]) -> SpyFunction[R]:
 
 
 def get_usage_statistic(function: SpyFunction[R]) -> Iterable[FunctionCallInfo]:
+    # redundant check, but just in case
+    if not isinstance(function, SpyFunction):
+        raise TypeError("Can only inspect usage statistic of spy functions")
     return function.get_call_info()

@@ -54,6 +54,13 @@ class MyTestCase(unittest.TestCase):
         args = self.get_all_args_stats()
         self.assertEqual(expected_args, args)
 
+    def test_should_raise_if_trying_to_inspect_not_spied_function(self):
+        def f(x):
+            return x
+
+        with self.assertRaises(TypeError):
+            get_usage_statistic(1)
+
 
 if __name__ == "__main__":
     unittest.main()
