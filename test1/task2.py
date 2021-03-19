@@ -7,10 +7,13 @@ R = TypeVar("R")
 
 class WithRuntimeCheckedParamTypes(Generic[R]):
     def __init__(self, function: Callable[..., R], arg_types: Tuple[type, ...], kwarg_types: Dict[str, type]):
-        argspec = inspect.getfullargspec(function)
+        try:
+            argspec = inspect.getfullargspec(function)
+            self.arg_names = argspec.args
+            self.kwonly_names = argspec.kwonlyargs
+        except TypeError:
+            raise TypeError("Cannot check runtime types of this function, because Python does not allow it.")
         self.function = function
-        self.arg_names = argspec.args
-        self.kwonly_names = argspec.kwonlyargs
         self.arg_types = arg_types
         self.kwarg_types = kwarg_types
         update_wrapper(self, function)
@@ -50,3 +53,6 @@ def takes(*args: type, **kwargs: type):
         return WithRuntimeCheckedParamTypes(function, args, kwargs)
 
     return decorator
+
+
+takes(int)(print)
