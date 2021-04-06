@@ -167,6 +167,11 @@ class NotEmptyNodeTestCase(unittest.TestCase):
             node = node.insert_key(i, -i)
         self.assertEqual(generate_two_sided_bamboo(0, 10, 20), node)
 
+    def test_should_be_able_to_set_root_of_two_sided_bamboo(self):
+        bamboo = generate_two_sided_bamboo(0, 100, 200)
+        expected = NotEmptyNode(100, 999, bamboo.left, bamboo.right)
+        self.assertEqual(expected, bamboo.insert_key(100, 999))
+
     def test_should_be_able_to_remove_root_of_two_sided_bamboo(self):
         bamboo = generate_two_sided_bamboo(0, 100, 200)
         expected = NotEmptyNode(99, 99, generate_left_bamboo(0, 99), generate_right_bamboo(101, 200))
@@ -192,6 +197,11 @@ class NotEmptyNodeTestCase(unittest.TestCase):
         bamboo = generate_two_sided_bamboo(0, 50, 100)
         expected = [(i, i) for i in range(51)] + [(i, -i) for i in range(51, 100)]
         self.assertEqual(expected, list(bamboo.ascending_order()))
+
+    def test_should_extend_bamboo_by_inserting_key(self):
+        bamboo = generate_right_bamboo(100, 200)
+        expected = generate_right_bamboo(99, 200)
+        self.assertEqual(expected, bamboo.insert_key(99, -99))
 
 
 if __name__ == "__main__":
