@@ -1,4 +1,4 @@
-from typing import Protocol, TypeVar, Any
+from typing import Protocol, Any
 
 
 class Comparable(Protocol):
