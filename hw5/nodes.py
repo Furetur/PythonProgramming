@@ -133,6 +133,7 @@ class NotEmptyNode(Node[K, V]):
     """
     The implementation of the non-empty treap subtree.
     """
+
     key: K
     priority: V
     left: Node[K, V] = EmptyNode()
@@ -154,15 +155,13 @@ class NotEmptyNode(Node[K, V]):
             raise ValueError("Each key of the first tree should be smaller than any key in the second tree")
         if self.priority > other.priority:
             return NotEmptyNode(self.key, self.priority, self.left, self.right.merge(other))
-        else:
-            return NotEmptyNode(other.key, other.priority, self.merge(other.left), other.right)
+        return NotEmptyNode(other.key, other.priority, self.merge(other.left), other.right)
 
     def without_smallest_key(self) -> "Node[K, V]":
         if not isinstance(self.left, NotEmptyNode):
             return self.right
-        else:
-            left = cast(NotEmptyNode, self.left)
-            return NotEmptyNode(self.key, self.priority, left.without_smallest_key(), self.right)
+        left = cast(NotEmptyNode, self.left)
+        return NotEmptyNode(self.key, self.priority, left.without_smallest_key(), self.right)
 
     def __len__(self):
         return 1 + len(self.left) + len(self.right)
@@ -190,13 +189,11 @@ class NotEmptyNode(Node[K, V]):
             return True
         elif self.key < key:
             return key in self.right
-        else:
-            return key in self.left
+        return key in self.left
 
     def __getitem__(self, key: K):
         if self.key == key:
             return self.priority
         elif self.key < key:
             return self.right[key]
-        else:
-            return self.left[key]
+        return self.left[key]

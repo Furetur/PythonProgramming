@@ -9,10 +9,11 @@ V = TypeVar("V", bound=Comparable)
 Entry = Tuple[K, V]
 
 
-class Treap(MutableMapping[K, V]):
+class Treap(MutableMapping):
     """
     A treap data structure as defined at https://en.wikipedia.org/wiki/Treap
     """
+
     def __init__(self):
         """
         Creates an initially empty treap
