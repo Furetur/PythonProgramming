@@ -143,9 +143,8 @@ class NotEmptyNode(Node[K, V]):
         if key > self.key:
             (smaller_keys, not_smaller_keys) = self.right.split(key)
             return NotEmptyNode(self.key, self.priority, self.left, smaller_keys), not_smaller_keys
-        else:
-            (smaller_keys, not_smaller_keys) = self.left.split(key)
-            return smaller_keys, NotEmptyNode(self.key, self.priority, not_smaller_keys, self.right)
+        (smaller_keys, not_smaller_keys) = self.left.split(key)
+        return smaller_keys, NotEmptyNode(self.key, self.priority, not_smaller_keys, self.right)
 
     def merge(self, other: "Node[K, V]") -> "Node[K, V]":
         if not isinstance(other, NotEmptyNode):
