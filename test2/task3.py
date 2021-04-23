@@ -9,9 +9,6 @@ sentence_pattern = re.compile("[^!\.\?]+[!\.\?]+")
 
 
 def count_sentences(text: str) -> int:
-    text = text.replace("\n", " ")
-    for s in sentence_pattern.findall(text):
-        print("sent:", s)
     return len(sentence_pattern.findall(text))
 
 
@@ -30,3 +27,14 @@ class WordsRanker:
         for match in word_pattern.findall(text):
             counter[match.lower()] += 1
         return [WordFrequency(word, freq) for word, freq in counter.most_common(self.top_size)]
+
+
+if __name__ == "__main__":
+    with open("text.txt") as file:
+        text = file.read()
+        ranker = WordsRanker(10)
+        print("Top words:")
+        for word_freq in ranker.rank_words(text):
+            print(f"{word_freq} --> {word_freq.frequency} times.")
+
+        print(f"There are {count_sentences(text)} sentences in the text.")
