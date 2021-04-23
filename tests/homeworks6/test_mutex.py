@@ -2,7 +2,7 @@ import unittest
 from threading import Thread
 from typing import Any
 
-from hw6.mutex import Mutex
+from hw6.semaphore import Mutex
 
 
 class MutexTestCase(unittest.TestCase):
@@ -73,23 +73,14 @@ class MutexIncrementsTestCase(unittest.TestCase):
 
         self.assertEqual(200_000, self.count)
 
-    def test_correctly_works_with_8_threads_and_100_000_increments_each(self):
-        threads = [self.create_increment_thread(100_000) for i in range(8)]
+    def test_correctly_works_with_4_threads_and_100_000_increments_each(self):
+        threads = [self.create_increment_thread(100_000) for i in range(4)]
         for thread in threads:
             thread.start()
         for thread in threads:
             thread.join()
 
-        self.assertEqual(100_000 * 8, self.count)
-
-    def test_correctly_works_with_4_threads_and_1_000_000_increments_each(self):
-        threads = [self.create_increment_thread(1_000_000) for i in range(4)]
-        for thread in threads:
-            thread.start()
-        for thread in threads:
-            thread.join()
-
-        self.assertEqual(1_000_000 * 4, self.count)
+        self.assertEqual(100_000 * 4, self.count)
 
     def test_long_correctly_works_with_2_threads_and_100_000_increments_each(self):
         thread1 = self.create_long_increment_thread(100_000)
